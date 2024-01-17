@@ -1,0 +1,88 @@
+public class Test_class extends Base_Class {
+	public int TestcaseId;
+	public guru99Insurance1 login;
+	public guru99Insurance2 logout;
+	@BeforeClass
+	public void OpenBrowser() throws InterruptedException 
+	{
+		intitializebrowerse();
+		//crate object of pom 1 class
+		login=new 	guru99Insurance1(driver);
+		logout=new guru99Insurance2(driver);
+	}
+
+	@BeforeMethod
+	public void login() throws IOException 
+	{
+		login.enterEmail(Utility_class.getdatafromPF("EM"));
+		login.enterPassword(Utility_class.getdatafromPF("PSW"));
+		login.Click_Login();
+	}
+	@Test(priority=1)
+	public void TC1() throws EncryptedDocumentException, IOException 
+	{  TestcaseId=100;
+		String ActualEmail=logout.getEmail();
+		String ExpectedEmail=Utility_class.getdatafromExelSheet(0, 0);
+	Assert.assertEquals( ActualEmail, ExpectedEmail);
+
+	}
+	@Test(priority=2)
+	public void getTitel() throws EncryptedDocumentException, IOException 
+	{   TestcaseId=101;
+		String ActualTital=driver.getTitle();
+		String ExpectedTital=Utility_class.getdatafromExelSheet(1, 0);
+		Assert.assertEquals(ActualTital , ExpectedTital );
+	}
+	@Test(priority=3)
+	public void Calculatepremium() throws InterruptedException, EncryptedDocumentException, IOException
+	{   TestcaseId=102;
+		logout.clickRequestQoutation();
+		Thread.sleep(1000);
+		logout.selectBreakdowncover();
+		Thread.sleep(1000);
+		logout.clickWindscreenrepair();
+		Thread.sleep(1000);
+		logout.Enterincidents(Utility_class.getdatafromExelSheet(2, 0));
+		Thread.sleep(1000);
+		logout.EnterRegistration(Utility_class.getdatafromExelSheet(3, 0));
+		Thread.sleep(1000);
+		logout.EnterAnnual_mileage(Utility_class.getdatafromExelSheet(4, 0));
+		Thread.sleep(1000);
+		logout.EnterEstimated_value(Utility_class.getdatafromExelSheet(5, 0));
+		Thread.sleep(1000);
+		logout.selectParking_Location();
+		Thread.sleep(1000);
+		logout.selectSOP_year();
+		Thread.sleep(1000);
+		logout.selectSOP_month();
+		Thread.sleep(1000);
+		logout.selectSOP_date();
+		Thread.sleep(1000);
+		logout.ClickCalculate_Premium();
+		Thread.sleep(1000);
+		String actualpremiumofcar=logout.getFinalpremium();
+		System.out.println(actualpremiumofcar);
+		String expectedpremiumofcar =Utility_class.getdatafromExelSheet(6, 0);
+		Assert.assertEquals(actualpremiumofcar,expectedpremiumofcar);
+	}
+	
+	@AfterMethod
+	public void logout(ITestResult Result) throws IOException
+	
+	{
+		if(Result.getStatus()==ITestResult.FAILURE)  
+		{
+			Utility_class.captureScreenshot(driver, TestcaseId);
+		}
+		logout.click_logout();
+	
+
+	}
+	@AfterClass
+	public void closeBrowser() 
+	{
+		
+	driver.close();
+
+	}
+}
